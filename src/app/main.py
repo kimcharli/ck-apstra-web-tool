@@ -50,6 +50,27 @@ async def upload_env_ini(request: Request, file: UploadFile):
     # return await connect()
 
 
+@app.get("/connect")
+async def connect():
+    """
+    login to the server and blueprints
+    then sync the data
+    """
+    global global_store
+
+    await sse_logging(f"/connect begin")
+    await SseEvent(data=SseEventData(id='connect').loading()).send()
+
+    version = await global_store.login_server()
+
+    # await global_store.tor_bp_selection()
+
+    # await global_store.login_blueprint()
+    await SseEvent(data=SseEventData(id='connect').done()).send()
+    await sse_logging(f"/connect end")
+    # return version
+    return 'connected'
+
 
 @app.get("/", response_class=HTMLResponse)
 async def get_index_html(request: Request):

@@ -7,6 +7,7 @@ from dataclasses import dataclass, asdict
 import asyncio
 from typing import Any, Optional
 
+from ck_apstra_api.apstra_session import CkApstraSession
 
 sse_queue = asyncio.Queue()
 
@@ -130,8 +131,20 @@ class GlobalStore:
     apstra: ApstraServer
     target: BpTarget
 
+    logger: Any = logging.getLogger("GlobalStore")  # logging.Logger
+
     async def post_init(self):
         self.migration_status = None
+
+    async def sse_logging(self, text):
+        await sse_logging(text, self.logger)
+
+
+    async def login_server(self) -> str:
+        await self.sse_logging(f"login_server() begin")
+        self.apstra_server = CkApstraSession(self.apstra['host'], int(self.apstra['port']), self.apstra['username'], self.apstra['password'])
+        await self.sse_logging(f"login_server(): {self.apstra_server=}")
+        return self.apstra_server.version
 
 
 global_store: GlobalStore = None  # initialized by main.py
