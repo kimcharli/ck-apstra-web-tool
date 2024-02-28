@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Consolidation</title>
+
+    <link rel="icon" href="/images/powered-on.svg" />
+
+    <link href="/css/style.css" rel="stylesheet" />
+
+    <!-- <script src="/js/dexie.js"></script> -->
+    <script src="/js/main.js"></script>
+    <script src="/js/htmx.min.js"></script>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+
+        <h3>Commands</h3>
+
+        <div id="load-env-div" class="data-state" style="padding-left: 6px;padding-right: 6px;font-family: Arial;font-size: 14px;" data-state="init">
+            Load
+            <img id="disconnect" src="/images/trash.svg" alt="trash env" align="right" hx-get="/disconnect" hx-target="#last-message"/>
+            <a href="/static/env-example.json" download="env-example.json"><img src="/images/download.svg" align="right" /></a>
+            <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" align="right" onclick="document.getElementById('upload-env-ini-input').click()"/><input type="file" id="upload-env-ini-input" name="file"  hx-encoding="multipart/form-data" hx-post="/upload-env-json" hx-target="#last-message" hx-trigger="change" style="display: none;">
+            
+            <!-- <form hx-encoding="multipart/form-data" hx-post="/upload-env-ini" hx-target="#last-message" > -->
+                <!-- <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" align="right" >                         -->
+                <!-- <input type="file" id="upload-env-ini-input" name="file">
+                <button type="submit"><img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" > </button>
+            </form> -->
+
+        </div>
+
+        <div>
+            <button id="connect" class="data-state" type="button" data-state="init" hx-get="/connect" hx-target="#last-message">Connect</button>
+        </div>
+
+        <div>
+            <label>Last Message</label>
+            <div id="last-message"></div>
+        </div>
+
+    </aside>
+
+    <div class="container">
+
+        <section id="event-box" class="event-box">
+            <pre id="event-box-text"></pre>
+        </section>
+
+        <footer class="footer">
+            ©️ Charlie Kim
+        </footer>
+
+    </div>
+</body>
+
+</html>

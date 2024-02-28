@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bp-consolidation-web"
+version = "0.0.1"
+dependencies = [
+    'fastapi == 0.104.1',
+    'sse_starlette == 2.0.0',
+    'asyncio == 3.4.3',
+    'uvicorn[standard] == 0.24.0.post1',
+    'pytest == 7.4.3',
+    'ck-apstra-api == 0.2.20',
+    'python-multipart',
+]
+requires-python = ">=3.11"
+authors = [
+    {name = "Charlie Kim", email = "kimcharli@gmail.com"},
+]
+description = "Web application for Apstra blueprint consolidation of TOR bp into main bp"
+readme = "README.md"
+license = {text = "MIT License"}
+keywords = ["apstra", "blueprint", "web"]
+
+[project.urls]
+Repogitory = "https://github.com/kimcharli/bp-consolidation-web"
+
+[project.scripts]
+run-web = "app.main:start"
+#run-web = "uvicorn src.app.main:app --reload --log-config=log_conf.yml"
+
+[tool]
+
+

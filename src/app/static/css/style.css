@@ -1,0 +1,370 @@
+
+/* side bar in fixed position */
+.sidebar {
+    background: green;
+    height: 100vh;
+    width: 180px;
+    position: fixed;
+    z-index: 1;
+}
+
+/* grid layout */
+.container {
+    margin-left: 185px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr min-content;
+    grid-template-areas: 
+        "event-box event-box"
+        "header header"
+        "main-blueprint tor-blueprint"
+        "main-access-switch tor-access-switch"
+        "generic-systems generic-systems"
+        "virtual-networks virtual-networks"
+        "device-configuration-0 device-configuration-0"
+        "device-configuration-1 device-configuration-1"
+        "footer footer";
+    row-gap: 2px;
+}
+
+.event-box {
+    grid-area: event-box;
+    background-color: #f5f5f5;  
+    min-height: 100px;
+    max-height: 100px;
+    overflow-y: auto;
+    border: solid 1px;
+}
+
+.header {
+    grid-area: header;
+    background-color: #f5f5f5;
+}
+
+.main-blueprint {
+    grid-area: main-blueprint;    
+    text-align: left;
+    border: solid 1px;
+    
+}
+.main-blueprint::before {
+    content: "Main Blueprint: ";
+    font-weight: bold;
+}
+
+.tor-blueprint {
+    grid-area: tor-blueprint;
+    text-align: left;
+    border: solid 1px;
+}
+/* .tor-blueprint::before {
+    content: "TOR Blueprint: ";
+    font-weight: bold;
+} */
+
+.main-access-switch {
+    grid-area: main-access-switch;
+    border: solid 1px;
+}
+.tor-access-switch {
+    grid-area: tor-access-switch;
+    border: solid 1px;
+}
+
+.generic-systems {
+    grid-area: generic-systems;
+}
+
+
+.virtual-networks {
+    grid-area: virtual-networks;
+}
+
+.device-configuration-0 {
+    grid-area: device-configuration-0;
+}
+
+.device-configuration-1 {
+    grid-area: device-configuration-1;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    overflow-y: auto;
+    max-height: 800px;
+}
+
+.column {
+    width: 50%;
+}
+
+
+.footer {
+    grid-area: footer;
+    background-color: darkslateblue;
+}
+
+
+/* global */
+
+:root {
+    --global-warning-color: orange;
+    --global-ok-color: #84b135;
+    --global-error-color: #e43d2f;
+    --global-header-color: #eee;
+    --global-th-color: #0096a4;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+:disabled {
+    background-color: grey;
+}
+
+
+.section-header {
+    background-color: var(--global-th-color);
+    text-align: left;
+}
+
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  }
+
+  /* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: white;
+    color: black;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+   
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+  }
+
+  /* Show the tooltip text when you mouse over the tooltip container
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    z-index: 9999;
+  } */
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    z-index: 10;  /* bring it on top */
+}
+
+@keyframes pulse {
+    0%, 49% {
+      color: white;
+    }
+    50%, 100% {
+      color: transparent;
+    }
+}
+
+
+/* file input */
+input::file-selector-button {
+    font-weight: bold;
+    color: dodgerblue;
+    padding: 0.5em;
+    border: thin solid grey;
+    border-radius: 3px;
+}
+  
+
+div#last-message {
+    color: white;
+}
+
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 0.5em 0.5em 0;
+  }
+  
+summary {
+    font-weight: bold;
+    margin: -0.5em -0.5em 0;
+    padding: 0.5em;
+    background-color: var(--global-th-color);
+}
+  
+details[open] {
+    padding: 0.5em;
+}
+  
+details[open] summary {
+    border-bottom: 1px solid #aaa;
+    margin-bottom: 0.5em;
+}
+  
+
+
+
+table {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid black;
+    text-align: left;
+}
+th, .th, caption {
+    background-color: var(--global-th-color);
+    text-align: left;
+}
+
+.column a {
+    background-color: var(--global-th-color);
+    display: block;
+    margin: 1px;
+}
+
+/* sidebar */
+aside img {
+    width: 20px;
+    height: 20px;
+    background-color: white;
+}
+
+aside button {
+    width: 100%;
+    text-align: left;
+}
+
+.data-state:disabled {
+    background-color: gray;
+}
+.data-state[data-state="init"] {
+    background-color: var(--global-warning-color);
+}
+.data-state[data-state="loading"] {
+    background-color: var(--global-warning-color);
+    animation: pulse 1s infinite
+}
+.data-state[data-state="done"] {
+    background-color: var(--global-ok-color);
+}
+.data-state[data-state="none"] {
+    background-color: gray;
+}
+.data-state[data-state="disabled"] {
+    background-color: gray;
+}
+.data-state[data-state="error"] {
+    background-color: var(--global-error-color);
+}
+.td[data-message] {
+    position: relative;
+    text-decoration: underline;
+    color: #00f;
+    cursor: help;    
+}
+
+.td[data-message]:hover::after,
+.td[data-message]:focus::after {
+    content: attr(data-message);
+    position: absolute;
+    left: 0;
+    top: 24px;
+    min-width: 200px;
+    border: 1px #aaaaaa solid;
+    border-radius: 10px;
+    background-color: #ffffcc;
+    padding: 12px;
+    color: #000000;
+    font-size: 14px;
+    z-index: 1;
+}
+
+
+/* generic systems */
+.system-label, .new_label {
+    text-align: left;
+    width: 32ch;
+}
+.ae {
+    width: 4ch;
+}
+.cts {
+    text-align: right;
+    width: 3ch;
+}
+.speed {
+    text-align: right;
+    width: 4ch;
+}
+.speed[data-speed="100G"] {
+    background-color: #a153ba;
+}
+.speed[data-speed="40G"] {
+    background-color: #896dce;
+}
+.speed[data-speed="25G"] {
+    background-color: #ffb71b;
+}
+.speed[data-speed="10G"] {
+    background: #037dba;
+}
+.speed[data-speed="1G"] {
+    background-color: #e36b00;
+}
+
+
+/* access switches */
+svg, line, rect {
+    /* vector-effect: non-scaling-stroke; */
+    stroke-opacity: 1;
+    stroke: black;
+}
+svg text {
+    font-family: system-ui, sans-serif;
+    font-size: 0.5em;
+    font-weight: normal;
+    text-anchor: middle;
+    /* alignment-baseline: central; */
+    text-rendering: optimizeLegibility;
+}
+
+svg .data-state[data-state="init"] {
+    /* background-color: var(--global-warning-color); */
+    fill: var(--global-warning-color);
+}
+svg .data-state[data-state="loading"] {
+    animation: pulse 1s infinite
+}
+svg .data-state[data-state="done"] {
+    /* background-color: var(--global-ok-color); */
+    fill: var(--global-ok-color);
+}
+svg .data-state[data-state="error"] {
+    /* background-color: var(--global-error-color); */
+    fill: var(--global-error-color);
+}
+
+/* blueprint */
+/* #tor_bp {
+    width: 100%;
+} */
+.tor-blueprint select {
+    width: 20ch;
+}
+.tor-blueprint label {
+    opacity: 1;
+}
+.tor-blueprint label, .tor-blueprint select {
+    display: inline;
+}

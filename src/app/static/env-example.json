@@ -1,0 +1,15 @@
+{
+    "apstra": {
+        "host": "nf-apstra.pslab.link",
+        "port": "443",
+        "username": "admin",
+        "password": "admin",
+        "logging_level": "DEBUG"   
+    },
+    "target": {
+        "main_bp": "ATLANTA-Master",
+        "tor_bp": "AZ-1_1-R5R15",
+        "tor_im_new": "_ATL-AS-5120-48T",
+        "cabling_maps_yaml_file": "tests/fixtures/sample-cabling-maps.yaml" 
+    }
+}
