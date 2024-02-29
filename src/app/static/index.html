@@ -25,7 +25,6 @@
             <a href="/static/env-example.json" download="env-example.json"><img src="/images/download.svg" align="right" /></a>
             <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" align="right" onclick="document.getElementById('upload-env-ini-input').click()"/><input type="file" id="upload-env-ini-input" name="file"  hx-encoding="multipart/form-data" hx-post="/upload-env-json" hx-target="#last-message" hx-trigger="change" style="display: none;">
             
-
         </div>
 
         <div>
@@ -34,9 +33,9 @@
 
         <hr />
 
-        <div>
-            <a id="pull-config" class="data-state" data-state="init" href="/pull-config">Pull Config</a>
-        </div>
+        <form method="get" action="/pull-config">
+            <button id="pull-config" class="data-state" type="submit" data-state="init">Pull Config</button>
+        </form>
 
 
         <hr />
