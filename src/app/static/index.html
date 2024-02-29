@@ -25,17 +25,21 @@
             <a href="/static/env-example.json" download="env-example.json"><img src="/images/download.svg" align="right" /></a>
             <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" align="right" onclick="document.getElementById('upload-env-ini-input').click()"/><input type="file" id="upload-env-ini-input" name="file"  hx-encoding="multipart/form-data" hx-post="/upload-env-json" hx-target="#last-message" hx-trigger="change" style="display: none;">
             
-            <!-- <form hx-encoding="multipart/form-data" hx-post="/upload-env-ini" hx-target="#last-message" > -->
-                <!-- <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" align="right" >                         -->
-                <!-- <input type="file" id="upload-env-ini-input" name="file">
-                <button type="submit"><img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini" > </button>
-            </form> -->
 
         </div>
 
         <div>
             <button id="connect" class="data-state" type="button" data-state="init" hx-get="/connect" hx-target="#last-message">Connect</button>
         </div>
+
+        <hr />
+
+        <div>
+            <a id="pull-config" class="data-state" data-state="init" href="/pull-config">Pull Config</a>
+        </div>
+
+
+        <hr />
 
         <div>
             <label>Last Message</label>

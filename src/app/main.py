@@ -5,7 +5,7 @@ import uvicorn
 import asyncio
 from fastapi import FastAPI, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from sse_starlette.sse import EventSourceResponse
 
 from app.common import SseEvent, SseEventData, sse_logging, sse_queue, global_store, GlobalStore
@@ -47,7 +47,7 @@ async def upload_env_ini(request: Request, file: UploadFile):
     await SseEvent(data=SseEventData(id='load-env-div').done()).send()
 
     await sse_logging(f"/upload-env-json end")
-    # return await connect()
+    return await connect()
 
 
 @app.get("/connect")
@@ -68,8 +68,34 @@ async def connect():
     # await global_store.login_blueprint()
     await SseEvent(data=SseEventData(id='connect').done()).send()
     await sse_logging(f"/connect end")
-    # return version
-    return 'connected'
+    return f"connected {version}"
+
+
+@app.get("/pull-config")
+async def pull_config():
+    """
+    login to the server and blueprints
+    then sync the data
+    """
+    global global_store
+
+    await sse_logging(f"/pull-config begin")
+    await SseEvent(data=SseEventData(id='pull-config').loading()).send()
+
+    await global_store.pull_config()
+
+    # await global_store.tor_bp_selection()
+
+    # await global_store.login_blueprint()
+    await SseEvent(data=SseEventData(id='pull-config').done()).send()
+    await sse_logging(f"/pull-config end")
+    headers = {'Content-Disposition': f'attachment; filename="{os.path.basename(global_store.tgz_name)}"'}
+    return StreamingResponse(global_store.tgz_data, media_type='application/octet-stream', headers=headers)
+
+
+
+
+
 
 
 @app.get("/", response_class=HTMLResponse)

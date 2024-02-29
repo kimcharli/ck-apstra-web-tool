@@ -1,13 +1,19 @@
 
 from datetime import datetime
 from enum import StrEnum
+import glob
+from io import BytesIO
 import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import asyncio
-from typing import Any, Optional
+import os
+import tarfile
+from typing import Any, Dict, Optional
+import tempfile
 
 from ck_apstra_api.apstra_session import CkApstraSession
+from ck_apstra_api.apstra_blueprint import CkApstraBlueprint
 
 sse_queue = asyncio.Queue()
 
@@ -131,7 +137,12 @@ class GlobalStore:
     apstra: ApstraServer
     target: BpTarget
 
+    bp: Dict[str, Any] = field(default_factory=dict)  # main_bp, tor_bp (CkApstraBlueprint)
+
     logger: Any = logging.getLogger("GlobalStore")  # logging.Logger
+
+    tgz_name: Optional[str] = None
+    tgz_data: Optional[Any] = None
 
     async def post_init(self):
         self.migration_status = None
@@ -145,6 +156,86 @@ class GlobalStore:
         self.apstra_server = CkApstraSession(self.apstra['host'], int(self.apstra['port']), self.apstra['username'], self.apstra['password'])
         await self.sse_logging(f"login_server(): {self.apstra_server=}")
         return self.apstra_server.version
+
+    async def login_blueprint(self) -> None:
+        await self.sse_logging(f"login_blueprint")
+        for role in ['main_bp']:
+            label = self.target[role]
+            bp = CkApstraBlueprint(self.apstra_server, label)
+            self.bp[role] = bp
+            await self.sse_logging(f"login_blueprint {bp=}")
+            id = bp.id
+            # value = f'<a href="{self.apstra_url}/#/blueprints/{id}/staged" target="_blank">{label}</a>'
+            await self.sse_logging(f"login_blueprint() end")
+        return
+
+    def write_to_file(self, file_name, content):
+        MIN_SIZE = 2  # might have one \n
+        if len(content) > MIN_SIZE:
+            with open(file_name, 'w') as f:
+                f.write(content)
+
+    async def pull_config(self) -> str:
+        await self.sse_logging(f"pull_config() begin")
+
+        await self.login_blueprint()
+
+        bp_label = self.target['main_bp']
+        the_bp = self.bp['main_bp']
+        self.tgz_name = f"/tmp/{bp_label}.tgz"        
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            await self.sse_logging(f"pull_config(): {tmpdirname=}")
+            top_dir = f"{tmpdirname}/{bp_label}"
+            os.mkdir(top_dir)
+
+            for switch in [x['switch'] for x in the_bp.query("node('system', system_type='switch', name='switch')")]:
+                system_label = switch['label']
+                system_id = switch['id']
+                system_serial = switch['system_id']
+                system_dir = f"{top_dir}/{system_label}"
+                os.mkdir(system_dir)
+                await self.sse_logging(f"pull_config(): {system_label=}")
+
+                if system_serial:
+                    pristine_config = self.apstra_server.get_items(f"systems/{system_serial}/pristine-config")['pristine_data'][0]['content']
+                    # self.logger.warning(f"pull_config(): {pristine_config=}")
+                    with open(f"{system_dir}/pristine.txt", 'w') as f:
+                        f.write(pristine_config)
+
+                rendered_confg = the_bp.get_item(f"nodes/{system_id}/config-rendering")['config']
+                self.write_to_file(f"{system_dir}/rendered.txt", rendered_confg)
+
+
+                begin_configlet = '------BEGIN SECTION CONFIGLETS------'
+                begin_set = '------BEGIN SECTION SET AND DELETE BASED CONFIGLETS------'
+
+                config_string = rendered_confg.split(begin_configlet)
+                self.write_to_file(f"{system_dir}/merge.txt", config_string[0])
+                await self.sse_logging(f"pull_config(): {system_dir}/merge.txt")
+                if len(config_string) < 2:
+                    # no configlet. skip
+                    continue
+
+                configlet_string = config_string[1].split(begin_set)
+                self.write_to_file(f"{system_dir}/configlet.txt", configlet_string[0])
+                await self.sse_logging(f"pull_config(): {system_dir}/configlet.txt")
+                if len(configlet_string) < 2:
+                    # no configlet in set type. skip
+                    continue
+
+                self.write_to_file(f"{system_dir}/configlet-set.txt", configlet_string[1])
+                await self.sse_logging(f"pull_config(): {system_dir}/configlet-set.txt")
+
+            with tarfile.open(self.tgz_name, "w:gz") as archive:
+                archive.add(top_dir, recursive=True, arcname=bp_label)
+
+            with open(self.tgz_name, 'rb') as f:
+                self.tgz_data = BytesIO(f.read())
+
+            await self.sse_logging(f"pull_config(): {self.tgz_name=} {type(self.tgz_data)=}")
+        # await self.sse_logging(f"pull_config(): {self.apstra_server=}")
+        return
 
 
 global_store: GlobalStore = None  # initialized by main.py
