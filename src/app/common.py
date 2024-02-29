@@ -228,7 +228,7 @@ class GlobalStore:
             with open(self.tgz_name, 'rb') as f:
                 self.tgz_data = BytesIO(f.read())
 
-            await self.sse_logging(f"pull_config(): {self.tgz_name=} {type(self.tgz_data)=}")
+            # await self.sse_logging(f"pull_config(): {self.tgz_name=} {type(self.tgz_data)=}")
         # await self.sse_logging(f"pull_config(): {self.apstra_server=}")
         return
 
