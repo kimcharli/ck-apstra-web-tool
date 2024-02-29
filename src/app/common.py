@@ -169,11 +169,12 @@ class GlobalStore:
             await self.sse_logging(f"login_blueprint() end")
         return
 
-    def write_to_file(self, file_name, content):
+    async def write_to_file(self, file_name, content):
         MIN_SIZE = 2  # might have one \n
         if len(content) > MIN_SIZE:
             with open(file_name, 'w') as f:
                 f.write(content)
+            await self.sse_logging(f"write_to_file(): {os.path.basename(file_name)}")
 
     async def pull_config(self) -> str:
         await self.sse_logging(f"pull_config() begin")
@@ -185,7 +186,7 @@ class GlobalStore:
         self.tgz_name = f"/tmp/{bp_label}.tgz"        
 
         with tempfile.TemporaryDirectory() as tmpdirname:
-            await self.sse_logging(f"pull_config(): {tmpdirname=}")
+            # await self.sse_logging(f"pull_config(): {tmpdirname=}")
             top_dir = f"{tmpdirname}/{bp_label}"
             os.mkdir(top_dir)
 
@@ -199,33 +200,27 @@ class GlobalStore:
 
                 if system_serial:
                     pristine_config = self.apstra_server.get_items(f"systems/{system_serial}/pristine-config")['pristine_data'][0]['content']
-                    # self.logger.warning(f"pull_config(): {pristine_config=}")
-                    with open(f"{system_dir}/pristine.txt", 'w') as f:
-                        f.write(pristine_config)
+                    await self.write_to_file(f"{system_dir}/pristine.txt", pristine_config)
 
                 rendered_confg = the_bp.get_item(f"nodes/{system_id}/config-rendering")['config']
                 self.write_to_file(f"{system_dir}/rendered.txt", rendered_confg)
-
 
                 begin_configlet = '------BEGIN SECTION CONFIGLETS------'
                 begin_set = '------BEGIN SECTION SET AND DELETE BASED CONFIGLETS------'
 
                 config_string = rendered_confg.split(begin_configlet)
-                self.write_to_file(f"{system_dir}/merge.txt", config_string[0])
-                await self.sse_logging(f"pull_config(): {system_dir}/merge.txt")
+                await self.write_to_file(f"{system_dir}/intended.txt", config_string[0])
                 if len(config_string) < 2:
                     # no configlet. skip
                     continue
 
                 configlet_string = config_string[1].split(begin_set)
-                self.write_to_file(f"{system_dir}/configlet.txt", configlet_string[0])
-                await self.sse_logging(f"pull_config(): {system_dir}/configlet.txt")
+                await self.write_to_file(f"{system_dir}/configlet.txt", configlet_string[0])
                 if len(configlet_string) < 2:
                     # no configlet in set type. skip
                     continue
 
-                self.write_to_file(f"{system_dir}/configlet-set.txt", configlet_string[1])
-                await self.sse_logging(f"pull_config(): {system_dir}/configlet-set.txt")
+                await self.write_to_file(f"{system_dir}/configlet-set.txt", configlet_string[1])
 
             with tarfile.open(self.tgz_name, "w:gz") as archive:
                 archive.add(top_dir, recursive=True, arcname=bp_label)

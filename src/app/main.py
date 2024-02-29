@@ -83,18 +83,13 @@ async def pull_config():
     await SseEvent(data=SseEventData(id='pull-config').loading()).send()
 
     await global_store.pull_config()
+    tgz_name = os.path.basename(global_store.tgz_name)
 
-    # await global_store.tor_bp_selection()
-
-    # await global_store.login_blueprint()
     await SseEvent(data=SseEventData(id='pull-config').done()).send()
     await sse_logging(f"/pull-config end")
-    headers = {'Content-Disposition': f'attachment; filename="{os.path.basename(global_store.tgz_name)}"'}
+    await SseEvent(data=SseEventData(id='last-message', value=f"{tgz_name} downloaded")).send()
+    headers = {'Content-Disposition': f'attachment; filename="{tgz_name}"'}
     return StreamingResponse(global_store.tgz_data, media_type='application/octet-stream', headers=headers)
-
-
-
-
 
 
 
