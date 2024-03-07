@@ -1,7 +1,17 @@
+/* root */
+:root {
+    --global-warning-color: orange;
+    --global-ok-color: #84b135;
+    --global-error-color: #e43d2f;
+    --global-header-color: #eee;
+    --global-th-color: #0096a4;
+    --sidebar-color: hsl(108, 100%, 90%);
+}
 
 /* side bar in fixed position */
 .sidebar {
-    background: green;
+    /* background: green; */
+    background: var(--sidebar-color);
     height: 100vh;
     width: 180px;
     position: fixed;
@@ -107,14 +117,6 @@
 
 
 /* global */
-
-:root {
-    --global-warning-color: orange;
-    --global-ok-color: #84b135;
-    --global-error-color: #e43d2f;
-    --global-header-color: #eee;
-    --global-th-color: #0096a4;
-}
 
 body {
     font-family: Arial, Helvetica, sans-serif;

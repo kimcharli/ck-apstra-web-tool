@@ -4,6 +4,6 @@
 # run
 
 ```
-uvicorn src.app.main:app --reload --log-config=log_conf.yml
+uvicorn src.app.main:app --reload --log-config=log_conf.yml --port 8001
 ```
 

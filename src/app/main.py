@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from sse_starlette.sse import EventSourceResponse
 
-from app.common import SseEvent, SseEventData, sse_logging, sse_queue, global_store, GlobalStore
+from app.lib.common import SseEvent, SseEventData, sse_logging, sse_queue, global_store, GlobalStore, ButtonIdEnum
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
@@ -66,7 +66,8 @@ async def connect():
     # await global_store.tor_bp_selection()
 
     # await global_store.login_blueprint()
-    await SseEvent(data=SseEventData(id='connect').done()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_CONNECT).done()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).enable()).send()
     await sse_logging(f"/connect end")
     return f"connected {version}"
 
