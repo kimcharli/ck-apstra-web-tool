@@ -116,6 +116,40 @@
 }
 
 
+/* sidebar */
+
+aside div {
+    width: 100%;
+}
+
+.btn {
+    display: inline-block;
+    width: 91%;
+    font: 400 13px system-ui;
+    margin: 0em;
+    padding-inline: 6px;
+    border-width: 2px;
+    border-style: outset;
+    border-color: buttonborder;
+    border-image: initial;
+}
+
+.btn:disabled {
+    /* background-color: grey; */
+    cursor: not-allowed;
+    color: -internal-light-dark(rgba(16, 16, 16, 0.3), rgba(255, 255, 255, 0.3));
+    border-color: -internal-light-dark(rgba(118, 118, 118, 0.3), rgba(195, 195, 195, 0.3));
+}  
+
+.btn a {
+    text-decoration: none !important;
+}
+
+.btn a:visited {
+    color: inherit;
+}
+
+
 /* global */
 
 body {
@@ -143,7 +177,7 @@ body {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 120px;
-    background-color: white;
+    background-color: hsl(66, 100%, 50%);
     color: black;
     text-align: center;
     padding: 5px 0;
@@ -152,19 +186,16 @@ body {
     /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
+    top: -5px;
+    left: 105%;
   }
 
-  /* Show the tooltip text when you mouse over the tooltip container
+  /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
     visibility: visible;
-    z-index: 9999;
-  } */
+    z-index: 1;
+  }
 
-.tooltip-container:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-    z-index: 10;  /* bring it on top */
-}
 
 @keyframes pulse {
     0%, 49% {
@@ -369,4 +400,24 @@ svg .data-state[data-state="error"] {
 }
 .tor-blueprint label, .tor-blueprint select {
     display: inline;
+}
+
+
+/* tooltip test */
+[role="tooltip"],
+.hidetooltip.hidetooltip.hidetooltip + [role="tooltip"] {
+  visibility: hidden;
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: black;
+  color: white;
+}
+[aria-describedby]:hover,
+[aria-describedby]:focus {
+  position: relative;
+}
+[aria-describedby]:hover + [role="tooltip"],
+[aria-describedby]:focus + [role="tooltip"] {
+  visibility: visible;
 }
