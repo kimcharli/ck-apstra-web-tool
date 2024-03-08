@@ -68,6 +68,10 @@ async def connect():
     # await global_store.login_blueprint()
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_CONNECT).done()).send()
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).enable()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_JSON).enable()).send()
+
+    await global_store.bp_selections()
+
     await sse_logging(f"/connect end")
     return f"connected {version}"
 
@@ -75,22 +79,69 @@ async def connect():
 @app.get("/pull-config")
 async def pull_config():
     """
+    download device configuration
+    """
+    global global_store
+
+    await sse_logging(f"/pull-config begin")
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).loading()).send()
+
+    await global_store.pull_config()
+    tgz_name = os.path.basename(global_store.tgz_name)
+
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).done()).send()
+    await sse_logging(f"/pull-config end")
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=f"{tgz_name} downloaded")).send()
+    headers = {'Content-Disposition': f'attachment; filename="{tgz_name}"'}
+    return StreamingResponse(global_store.tgz_data, media_type='application/octet-stream', headers=headers)
+
+
+@app.get("/pull-bp-json")
+async def pull_bp_json():
+    """
+    download blueprint in json
+    """
+    global global_store
+
+    await sse_logging(f"/pull-bp-json begin")
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_JSON).loading()).send()
+
+    json_name = await global_store.pull_bp_json()
+
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_JSON).done()).send()
+    await sse_logging(f"/pull-bp-json end")
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=f"{json_name} downloaded")).send()
+    headers = {'Content-Disposition': f'attachment; filename="{json_name}"'}
+    return StreamingResponse(global_store.json_data, media_type='application/octet-stream', headers=headers)
+
+
+@app.get("/login-main-bp")
+async def login_main_bp(request: Request):
+    """
     login to the server and blueprints
     then sync the data
     """
     global global_store
 
-    await sse_logging(f"/pull-config begin")
-    await SseEvent(data=SseEventData(id='pull-config').loading()).send()
+    # body = await request.body()  # main-bp=richmond
+    # logging.warning(f"login-main-bp begin, {request.headers=}, {request.query_params=}, {body=}")
+    # async with request.form() as form:
+    #     for key, value in form.items():
+    #         logging.warning(f"login-main-bp form: {key=} {value=}")   
+    #     bp_name = form["main-bp"]
+    #     logging.warning(f"login-main-bp form: {bp_name=}")     
+    new_bp = request.query_params.get("main-bp")
+    await global_store.login_a_blueprint(new_bp)
 
-    await global_store.pull_config()
-    tgz_name = os.path.basename(global_store.tgz_name)
+    # await sse_logging(f"/login-main-bp begin")
+    # await SseEvent(data=SseEventData(id='login-main-bp').loading()).send()
 
-    await SseEvent(data=SseEventData(id='pull-config').done()).send()
-    await sse_logging(f"/pull-config end")
-    await SseEvent(data=SseEventData(id='last-message', value=f"{tgz_name} downloaded")).send()
-    headers = {'Content-Disposition': f'attachment; filename="{tgz_name}"'}
-    return StreamingResponse(global_store.tgz_data, media_type='application/octet-stream', headers=headers)
+    # await global_store.login_main_bp()
+
+    # await SseEvent(data=SseEventData(id='login-main-bp').done()).send()
+    await sse_logging(f"/login-main-bp end")
+    return "login-main-bp"
+
 
 
 

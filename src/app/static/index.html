@@ -34,9 +34,21 @@
         <hr />
 
         <form method="get" action="/pull-config">
-            <button id="pull-config" class="data-state" type="submit" data-state="init" disabled>Pull Config</button>
+            <button id="pull-config" class="data-state" type="submit" data-state="init" disabled><img src="/images/download.svg" />Pull Config</button>
         </form>
 
+        <hr />
+
+        Blueprint JSON
+
+        <form method="get" action="/pull-bp-json">
+            <button id="pull-bp-json" class="data-state" type="submit" data-state="init" disabled><img src="/images/download.svg" />Pull BP JSON</button>
+        </form>
+
+        <form method="get" action="/push-bp-json">
+            <button id="push-bp-json" class="data-state" type="submit" data-state="init" disabled><img src="/images/upload.svg" />Push BP JSON</button>
+            <input type="text" name="bp-name"/>
+        </form>
 
         <hr />
 
@@ -52,6 +64,12 @@
         <section id="event-box" class="event-box">
             <pre id="event-box-text"></pre>
         </section>
+
+        <div id="main_bp_div" class="main-blueprint data-state" data-id data-state="init">
+            <select id="main_bp_select" name="main-bp" class="main-blueprin" hx-get="/login-main-bp" hx-target="#last-message">
+                <option value="">choose blueprint</option>
+            </select>
+        </div>
 
         <footer class="footer">
             ©️ Charlie Kim
