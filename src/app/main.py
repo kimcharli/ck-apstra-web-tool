@@ -28,51 +28,35 @@ async def upload_env_ini(request: Request, file: UploadFile):
     global global_store
 
     await sse_logging(f"/upload-env-json begin")
-    # logger.info(f"/upload-env-ini begin")
     file_content = await file.read()
     file_dict = json.loads(file_content)
-    # file_dict = yaml.safe_load(file_content)
-
-    global_store = GlobalStore(**file_dict)
-    await global_store.post_init()
+    await global_store.post_init(file_dict)
     
-    # await SseEvent(data=SseEventData(id='apstra-host', value=global_store.apstra['host'])).send()
-    # await SseEvent(data=SseEventData(id='apstra-port', value=global_store.apstra['port'])).send()
-    # await SseEvent(data=SseEventData(id='apstra-username', value=global_store.apstra['username'])).send()
-    # # await SseEvent(data=SseEventData(id='apstra-password', value=global_store.apstra['password'])).send()
-
-    # await SseEvent(data=SseEventData(id='main_bp', value=global_store.target['main_bp'])).send()
-    # await SseEvent(data=SseEventData(id='tor_bp', value=global_store.target['tor_bp'])).send()
-
-    await SseEvent(data=SseEventData(id='load-env-div').done()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_ENV_DIV).done()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_LOGIN).init().enable()).send()
 
     await sse_logging(f"/upload-env-json end")
-    return await connect()
+    return "upload-env-json"
 
 
-@app.get("/connect")
-async def connect():
+@app.get("/login")
+async def login(request: Request):
     """
     login to the server and blueprints
     then sync the data
     """
     global global_store
 
-    await sse_logging(f"/connect begin")
+    await sse_logging(f"/login begin")
     await SseEvent(data=SseEventData(id='connect').loading()).send()
 
     version = await global_store.login_server()
 
-    # await global_store.tor_bp_selection()
-
-    # await global_store.login_blueprint()
-    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_CONNECT).done()).send()
-    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).enable()).send()
-    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_JSON).enable()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_LOGIN).done()).send()
 
     await global_store.bp_selections()
 
-    await sse_logging(f"/connect end")
+    await sse_logging(f"/login end")
     return f"connected {version}"
 
 
@@ -123,25 +107,33 @@ async def login_main_bp(request: Request):
     """
     global global_store
 
-    # body = await request.body()  # main-bp=richmond
-    # logging.warning(f"login-main-bp begin, {request.headers=}, {request.query_params=}, {body=}")
-    # async with request.form() as form:
-    #     for key, value in form.items():
-    #         logging.warning(f"login-main-bp form: {key=} {value=}")   
-    #     bp_name = form["main-bp"]
-    #     logging.warning(f"login-main-bp form: {bp_name=}")     
     new_bp = request.query_params.get("main-bp")
-    await global_store.login_a_blueprint(new_bp)
+    await global_store.login_blueprint(new_bp)
 
-    # await sse_logging(f"/login-main-bp begin")
-    # await SseEvent(data=SseEventData(id='login-main-bp').loading()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).enable()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_JSON).enable()).send()
 
-    # await global_store.login_main_bp()
-
-    # await SseEvent(data=SseEventData(id='login-main-bp').done()).send()
     await sse_logging(f"/login-main-bp end")
     return "login-main-bp"
 
+
+
+
+@app.get("/get-env-example")
+async def get_env_example():
+    """
+    download sample env file in json
+    """
+    global global_store
+
+    await sse_logging(f"/get_env_example begin")
+
+    json_name = await global_store.pull_env_json()
+
+    await sse_logging(f"/get_env_example end")
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=f"{json_name} downloaded")).send()
+    headers = {'Content-Disposition': f'attachment; filename="{json_name}"'}
+    return StreamingResponse(global_store.json_data, media_type='application/octet-stream', headers=headers)
 
 
 

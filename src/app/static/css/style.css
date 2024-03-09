@@ -8,8 +8,34 @@
     --sidebar-color: hsl(108, 100%, 90%);
 }
 
+/* global */
+
+body {
+    font: 400 13px system-ui;
+    /* font-family: Arial, Helvetica, sans-serif; */
+}
+
+body img {
+    width: 15px;
+    height: 15px;
+    background-color: white;
+}
+
+/* :disabled {
+    background-color: grey;
+} */
+
+.static {
+    background-color: var(--global-ok-color);
+}
+
+.section-header {
+    background-color: var(--global-th-color);
+    text-align: left;
+}
+
 /* side bar in fixed position */
-.sidebar {
+aside {
     /* background: green; */
     background: var(--sidebar-color);
     height: 100vh;
@@ -18,7 +44,21 @@
     z-index: 1;
 }
 
-/* grid layout */
+aside div {
+    width: 100%;
+}
+
+aside button {
+    width: 100%;
+    text-align: left;
+}
+
+aside form {
+    width: 100%;
+}
+
+
+/* grid layout
 .container {
     margin-left: 185px;
     display: grid;
@@ -67,10 +107,6 @@
     text-align: left;
     border: solid 1px;
 }
-/* .tor-blueprint::before {
-    content: "TOR Blueprint: ";
-    font-weight: bold;
-} */
 
 .main-access-switch {
     grid-area: main-access-switch;
@@ -107,8 +143,66 @@
 
 .column {
     width: 50%;
+} */
+
+.container {
+    margin-left: 185px;
+    /* display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr min-content;
+    grid-template-areas: 
+        "event-box event-box"
+        "header header"
+        "main-blueprint tor-blueprint"
+        "main-access-switch tor-access-switch"
+        "generic-systems generic-systems"
+        "virtual-networks virtual-networks"
+        "device-configuration-0 device-configuration-0"
+        "device-configuration-1 device-configuration-1"
+        "footer footer";
+    row-gap: 2px; */
 }
 
+.event-box {
+    grid-area: event-box;
+    background-color: #f5f5f5;  
+    min-height: 100px;
+    max-height: 100px;
+    overflow-y: auto;
+    border: solid 1px;
+}
+
+.apstra-server {
+    background: var(--sidebar-color);
+    display: flex;
+    width: 100%;
+}
+
+.server-actions {
+    align-self: flex-start;
+    width: 12ch;
+    display: grid;
+}
+
+.server-actions button {
+    width: 100%;
+    text-align: left;
+}
+
+.server-actions div {
+    width: 100%;
+    text-align: left;
+}
+
+
+.filler {
+    flex-grow: 1;
+}
+
+.server-table {
+    align-self: flex-end;
+
+}
 
 .footer {
     grid-area: footer;
@@ -116,15 +210,11 @@
 }
 
 
-/* sidebar */
 
-aside div {
-    width: 100%;
-}
 
-.btn {
+.server-actions .btn {
     display: inline-block;
-    width: 91%;
+    /* width: 91%; */
     font: 400 13px system-ui;
     margin: 0em;
     padding-inline: 6px;
@@ -134,12 +224,11 @@ aside div {
     border-image: initial;
 }
 
-.btn:disabled {
-    /* background-color: grey; */
+/* .btn:disabled, .btn:aria-disabled {
     cursor: not-allowed;
     color: -internal-light-dark(rgba(16, 16, 16, 0.3), rgba(255, 255, 255, 0.3));
     border-color: -internal-light-dark(rgba(118, 118, 118, 0.3), rgba(195, 195, 195, 0.3));
-}  
+}   */
 
 .btn a {
     text-decoration: none !important;
@@ -150,21 +239,15 @@ aside div {
 }
 
 
-/* global */
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-:disabled {
-    background-color: grey;
-}
+/* header */
+/* apstra server */
+/* header table {
+    font: 400 13px system-ui;
+    border-collapse: collapse;
+    border: 1px solid black;
+} */
 
 
-.section-header {
-    background-color: var(--global-th-color);
-    text-align: left;
-}
 
 /* Tooltip container */
 .tooltip {
@@ -266,20 +349,9 @@ th, .th, caption {
     margin: 1px;
 }
 
-/* sidebar */
-aside img {
-    width: 15px;
-    height: 15px;
-    background-color: white;
-}
 
-aside button {
-    width: 100%;
-    text-align: left;
-}
-
-.data-state:disabled {
-    background-color: gray;
+.data-state[data-state]:disabled{
+    background-color: inherit;
 }
 .data-state[data-state="init"] {
     background-color: var(--global-warning-color);
