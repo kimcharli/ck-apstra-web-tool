@@ -43,8 +43,7 @@ async def upload_env_ini(request: Request, file: UploadFile):
 @app.get("/login")
 async def login(request: Request):
     """
-    login to the server and blueprints
-    then sync the data
+    login to the server
     """
     global global_store
 
@@ -104,7 +103,7 @@ async def pull_bp_json():
     return StreamingResponse(global_store.json_data, media_type='application/octet-stream', headers=headers)
 
 
-@app.get("/login-main-bp")
+@app.get("/login-main-bp", response_class=HTMLResponse)
 async def login_main_bp(request: Request):
     """
     login to the server and blueprints
@@ -112,14 +111,17 @@ async def login_main_bp(request: Request):
     """
     global global_store
 
+    logging.warning(f"login-main-bp {request=} {request.query_params=} {request.headers=}")
+    # logging.warning(f"login-main-bp {request=} {request.query_params=}")
+
     new_bp = request.query_params.get("main-bp")
     await global_store.login_blueprint(new_bp)
 
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_CONFIG).enable()).send()
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PULL_JSON).enable()).send()
-
     await sse_logging(f"/login-main-bp end")
-    return "login-main-bp"
+
+    return f"login bp {new_bp}"
 
 
 

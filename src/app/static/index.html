@@ -28,7 +28,7 @@
         <hr />
 
         <form method="get" action="/pull-bp-json" class="tooltip">
-            <button id="pull-bp-json" class="data-state" data-state="init" disabled download><img src="/images/download.svg" /> Pull BP JSON</button>
+            <button id="pull-bp-json" class="data-state" data-state="init" disabled download><img src="/images/download.svg" /> Download BP in JSON</button>
             <span class="tooltiptext">Download the blueprint in json file.</span>
         </form>
 
@@ -37,7 +37,7 @@
         <form id="bp-post" hx-encoding="multipart/form-data" hx-post="/push-bp-json" hx-target="#last-message" class="tooltip">
             <input id="bp-post-file" type="file" name="file" style="display: none;">
             <button id="push-bp-json" class="data-state" type="submit" data-state="init" disabled>
-                <img src="/images/upload.svg" onclick="document.getElementById('bp-post-file').click()"/> Push BP JSON</button>
+                <img src="/images/upload.svg" onclick="document.getElementById('bp-post-file').click()"/> Create BP from JSON</button>
             <span class="tooltiptext">Create blueprint from the json file. The blueprint name comes from the file name.</span>
         </form>
 
@@ -73,21 +73,15 @@
                         hx-post="/upload-env-json" hx-trigger="change" style="display: none;">
                     Load
                 </div>
+                <!-- type button, onclick fetch -->
                 <div class="tooltip">
-                    <button id="login" class="btn data-state" data-state="init" hx-get="/login" disabled><img src="/images/login.svg" /> Login</button>
+                    <button id="login" class="btn data-state" data-state="init" type="button" onclick="fetch('/login')" disabled><img src="/images/login.svg" /> Login</button>
                     <span class="tooltiptext">Login to ther server.</span>
                 </div>
                 <div>
                     <button id="logout" class="btn data-state" data-state="init" disabled><img src="/images/logout.svg" alt="logout"
                          hx-get="/logout" hx-target="#last-message"> Logout</button>
                 </div>
-                <!-- <div class="data-state" data-state="done">
-                    <a href="/static/env-example.json" download="env-example.json"><img src="/images/download.svg" /> Sample</a>
-                </div> -->
-                <!-- <form class="tooltip" action="/static/env-example.json">
-                    <button class="static" download="env-example.json"><img src="/images/download.svg" /> Sample</button>
-                    <span class="tooltiptext">Download the sample environment json file.</span>
-                </form> -->
                 <form method="get" action="/get-env-example" class="tooltip">
                     <button class="static" download><img src="/images/download.svg" /> Sample</button>
                     <span class="tooltiptext">Download the sample environment json file.</span>
@@ -118,7 +112,8 @@
 
         <div id="main_bp_div" class="main-blueprint data-state" data-id data-state="init">
             Blueprint
-            <select id="main_bp_select" name="main-bp" class="main-blueprin" hx-get="/login-main-bp" hx-target="#last-message">
+            <select id="main_bp_select" name="main-bp" class="main-blueprin" 
+                hx-get="/login-main-bp" hx-target="#last-message">
                 <optgroup>
                     <option value="">--select blueprint--</option>
                 </optgroup>
