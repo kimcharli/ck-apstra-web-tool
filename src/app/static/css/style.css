@@ -21,6 +21,10 @@ body img {
     background-color: yellow;
 }
 
+optgroup {
+    font-size: 13px;
+}
+
 /* :disabled {
     background-color: grey;
 } */

@@ -34,9 +34,10 @@ async def upload_env_ini(request: Request, file: UploadFile):
     
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_ENV_DIV).done()).send()
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_LOGIN).init().enable()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=f"Uploaded {file.filename}")).send()
 
     await sse_logging(f"/upload-env-json end")
-    return "upload-env-json"
+    return
 
 
 @app.get("/login")
@@ -57,9 +58,11 @@ async def login(request: Request):
     await global_store.bp_selections()
 
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PUSH_JSON).init().enable()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=f"connected {version}")).send()
 
     await sse_logging(f"/login end")
-    return f"connected {version}"
+
+    return
 
 
 @app.get("/pull-config")
@@ -156,8 +159,9 @@ async def push_bp_json(request: Request, file: UploadFile):
 
     await sse_logging(f"/push-bp-json end")
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PUSH_JSON).done()).send()
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=return_text)).send()
 
-    return return_text
+    return
 
 
 @app.get("/", response_class=HTMLResponse)

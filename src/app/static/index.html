@@ -70,11 +70,11 @@
                 <div id="load-env-div" class="btn data-state" data-state="init" onclick="document.getElementById('upload-env-ini-input').click()">
                     <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini"/>
                     <input type="file" id="upload-env-ini-input" name="file"  hx-encoding="multipart/form-data" 
-                        hx-post="/upload-env-json" hx-target="#last-message" hx-trigger="change" style="display: none;">
+                        hx-post="/upload-env-json" hx-trigger="change" style="display: none;">
                     Load
                 </div>
                 <div class="tooltip">
-                    <button id="login" class="btn data-state" data-state="init" hx-get="/login" hx-target="#last-message" disabled><img src="/images/login.svg" /> Login</button>
+                    <button id="login" class="btn data-state" data-state="init" hx-get="/login" disabled><img src="/images/login.svg" /> Login</button>
                     <span class="tooltiptext">Login to ther server.</span>
                 </div>
                 <div>
@@ -117,8 +117,11 @@
         </div>
 
         <div id="main_bp_div" class="main-blueprint data-state" data-id data-state="init">
+            Blueprint
             <select id="main_bp_select" name="main-bp" class="main-blueprin" hx-get="/login-main-bp" hx-target="#last-message">
-                <option value="">--select blueprint--</option>
+                <optgroup>
+                    <option value="">--select blueprint--</option>
+                </optgroup>
             </select>
         </div>
 
