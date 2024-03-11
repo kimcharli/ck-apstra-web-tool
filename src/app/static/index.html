@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Consolidation</title>
+    <title>Apstra Web Tool</title>
 
     <link rel="icon" href="/images/powered-on.svg" />
 
@@ -27,16 +27,17 @@
 
         <hr />
 
-        Blueprint JSON
-
         <form method="get" action="/pull-bp-json" class="tooltip">
             <button id="pull-bp-json" class="data-state" data-state="init" disabled download><img src="/images/download.svg" /> Pull BP JSON</button>
             <span class="tooltiptext">Download the blueprint in json file.</span>
         </form>
 
-        <form method="get" action="/push-bp-json">
+        <hr />
+
+        <form id="bp-post" hx-encoding="multipart/form-data" hx-post="/push-bp-json" hx-target="#last-message" class="tooltip">
+            <input type="file" name="file">
             <button id="push-bp-json" class="data-state" type="submit" data-state="init" disabled><img src="/images/upload.svg" /> Push BP JSON</button>
-            New Blueprint Name: <input type="text" name="bp-name"/>
+            <span class="tooltiptext">Create blueprint from the json file. The blueprint name comes from the file name.</span>
         </form>
 
         <hr />

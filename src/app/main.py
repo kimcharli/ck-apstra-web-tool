@@ -56,6 +56,8 @@ async def login(request: Request):
 
     await global_store.bp_selections()
 
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PUSH_JSON).init().enable()).send()
+
     await sse_logging(f"/login end")
     return f"connected {version}"
 
@@ -135,6 +137,27 @@ async def get_env_example():
     headers = {'Content-Disposition': f'attachment; filename="{json_name}"'}
     return StreamingResponse(global_store.json_data, media_type='application/octet-stream', headers=headers)
 
+
+
+
+@app.post("/push-bp-json")
+async def push_bp_json(request: Request, file: UploadFile):
+    """
+    take environment yaml file to init global_store
+    """
+    global global_store
+
+    await sse_logging(f"/push-bp-json begin")
+    file_content = await file.read()
+    file_dict = json.loads(file_content)
+    bp_name = file.filename.split(".json")[0]
+    await global_store.push_bp_json(file_dict, bp_name)
+    # logging.warning(f"push_bp_json {request=} {request.query_params=} {request.headers=} {file.filename=} {file.content_type=} {file.file=}")
+
+    await sse_logging(f"/push-bp-json end")
+    await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_PUSH_JSON).done()).send()
+
+    return "push-bp-json"
 
 
 @app.get("/", response_class=HTMLResponse)
