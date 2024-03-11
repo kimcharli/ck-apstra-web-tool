@@ -3,5 +3,5 @@ sse_starlette==2.0.0
 asyncio==3.4.3
 uvicorn[standard]==0.24.0.post1
 pytest==7.4.3
-ck-apstra-api==0.2.20
+ck-apstra-api==0.2.21
 python-multipart

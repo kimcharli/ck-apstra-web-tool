@@ -207,7 +207,8 @@ class GlobalStore:
             top_dir = f"{tmpdirname}/{bp_label}"
             os.mkdir(top_dir)
 
-            for switch in [x['switch'] for x in the_bp.query("node('system', system_type='switch', name='switch')")]:
+            # switch for reference architecture, internal for freeform
+            for switch in [x['switch'] for x in the_bp.query("node('system', system_type=is_in(['switch', 'internal']), name='switch')")]:
                 system_label = switch['label']
                 system_id = switch['id']
                 system_serial = switch['system_id']
@@ -226,7 +227,10 @@ class GlobalStore:
                 begin_set = '------BEGIN SECTION SET AND DELETE BASED CONFIGLETS------'
 
                 config_string = rendered_confg.split(begin_configlet)
-                await self.write_to_file(f"{system_dir}/1_load_merge_intended.txt", config_string[0])
+                if the_bp.design == 'freeform':
+                    await self.write_to_file(f"{system_dir}/0_load_override_freeform.txt", config_string[0])
+                else:
+                    await self.write_to_file(f"{system_dir}/1_load_merge_intended.txt", config_string[0])
                 if len(config_string) < 2:
                     # no configlet. skip
                     continue
