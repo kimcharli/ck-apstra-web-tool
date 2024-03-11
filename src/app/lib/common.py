@@ -217,7 +217,7 @@ class GlobalStore:
 
                 if system_serial:
                     pristine_config = self.apstra_server.get_items(f"systems/{system_serial}/pristine-config")['pristine_data'][0]['content']
-                    await self.write_to_file(f"{system_dir}/pristine.txt", pristine_config)
+                    await self.write_to_file(f"{system_dir}/0_load_override_pristine.txt", pristine_config)
 
                 rendered_confg = the_bp.get_item(f"nodes/{system_id}/config-rendering")['config']
                 self.write_to_file(f"{system_dir}/rendered.txt", rendered_confg)
@@ -226,18 +226,18 @@ class GlobalStore:
                 begin_set = '------BEGIN SECTION SET AND DELETE BASED CONFIGLETS------'
 
                 config_string = rendered_confg.split(begin_configlet)
-                await self.write_to_file(f"{system_dir}/intended.txt", config_string[0])
+                await self.write_to_file(f"{system_dir}/1_load_merge_intended.txt", config_string[0])
                 if len(config_string) < 2:
                     # no configlet. skip
                     continue
 
                 configlet_string = config_string[1].split(begin_set)
-                await self.write_to_file(f"{system_dir}/configlet.txt", configlet_string[0])
+                await self.write_to_file(f"{system_dir}/2_load_merge_configlet.txt", configlet_string[0])
                 if len(configlet_string) < 2:
                     # no configlet in set type. skip
                     continue
 
-                await self.write_to_file(f"{system_dir}/configlet-set.txt", configlet_string[1])
+                await self.write_to_file(f"{system_dir}/3_load_set_configlet-set.txt", configlet_string[1])
 
             with tarfile.open(self.tgz_name, "w:gz") as archive:
                 archive.add(top_dir, recursive=True, arcname=bp_label)
