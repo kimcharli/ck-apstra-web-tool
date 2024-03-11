@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bp-consolidation-web"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
     'fastapi == 0.104.1',
     'sse_starlette == 2.0.0',
@@ -27,7 +27,7 @@ keywords = ["apstra", "blueprint", "web"]
 Repogitory = "https://github.com/kimcharli/bp-consolidation-web"
 
 [project.scripts]
-run-web = "app.main:start"
+run-web = "app.main:main"
 #run-web = "uvicorn src.app.main:app --reload --log-config=log_conf.yml"
 
 [tool]

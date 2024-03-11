@@ -157,19 +157,10 @@ async def sse(request: Request):
     return EventSourceResponse(event_generator())
 
 
-async def main():
-    # dotenv.load_dotenv()
-    # app_host = os.getenv("app_host") or "127.0.0.1"
-    # app_port = int(os.getenv("app_port")) or 8000
+def main():
     app_host = "127.0.0.1"
-    app_port = 8000
+    app_port = 8001
     uvicorn.run(app, host=app_host, port=app_port, log_level="debug")
 
-
-def start():
-    app_host = "127.0.0.1"
-    app_port = 8000
-    uvicorn.run("src.main:app", host=app_host, port=app_port, log_level="debug")
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
