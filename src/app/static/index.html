@@ -66,30 +66,32 @@
         </section>
 
         <div id="apstra-server" class="apstra-server">
-            <div id="server-actions" class="server-actions">
+            <div id="server-helper">
                 <div id="load-env-div" class="btn data-state" data-state="init" onclick="document.getElementById('upload-env-ini-input').click()">
                     <img id="upload-env-ini-img" src="/images/upload.svg" alt="Upload ini"/>
                     <input type="file" id="upload-env-ini-input" name="file"  hx-encoding="multipart/form-data" 
                         hx-post="/upload-env-json" hx-trigger="change" style="display: none;">
                     Load
                 </div>
-                <!-- type button, onclick fetch -->
-                <div class="tooltip">
-                    <button id="login" class="btn data-state" data-state="init" type="button" onclick="fetch('/login')" disabled><img src="/images/login.svg" /> Login</button>
-                    <span class="tooltiptext">Login to ther server.</span>
-                </div>
-                <div>
-                    <button id="logout" class="btn data-state" data-state="init" disabled><img src="/images/logout.svg" alt="logout"
-                         hx-get="/logout" hx-target="#last-message"> Logout</button>
-                </div>
                 <form method="get" action="/get-env-example" class="tooltip">
                     <button class="static" download><img src="/images/download.svg" /> Sample</button>
                     <span class="tooltiptext">Download the sample environment json file.</span>
                 </form>
-                
+                <div>
+                    <button id="logout" class="btn data-state" data-state="init" disabled><img src="/images/logout.svg" alt="logout"
+                         hx-get="/logout" hx-target="#last-message"> Logout</button>
+                </div>
             </div>
-            <div class="filler"></div>
-            <div id="apstra-server-table" class="server-table">
+            <div id="server-actions" class="server-actions">
+                <!-- type button, onclick fetch -->
+                <form hx-post="/login" hx-target="#last-message" class="tooltip">
+                    <button id="login" class="btn data-state" data-state="init" type="submit"><img src="/images/login.svg" /> Login</button>
+                    <span class="tooltiptext">Login to ther server.</span>
+                <!-- <div class="tooltip">
+                    <button id="login" class="btn data-state" data-state="init" type="button" onclick="fetch('/login')" disabled><img src="/images/login.svg" /> Login</button>
+                    <span class="tooltiptext">Login to ther server.</span>
+                </div> -->
+                
                 <table>
                     <caption>Apsta Server</caption>
                     <tr>
@@ -102,11 +104,12 @@
                     <tr>
                         <td id="apstra-version"></td>
                         <td><input id="apstra-host" type="text" name="host"/></td>
-                        <td><input id="apstra-port" type="text" name="port" /></td>
-                        <td><input id="apstra-username" type="text" name="username" /></td>
-                        <td><input id="apstra-password" type="password" name="password" /></td>
+                        <td><input id="apstra-port" type="text" name="port" value="443" /></td>
+                        <td><input id="apstra-username" type="text" name="username" value="admin" /></td>
+                        <td><input id="apstra-password" type="password" name="password" value="admin" /></td>
                     </tr>
                 </table>
+                </form>
             </div>
         </div>
 
@@ -114,7 +117,7 @@
             Blueprint
             <select id="main_bp_select" name="main-bp" class="main-blueprin" 
                 hx-get="/login-main-bp" hx-target="#last-message">
-                <optgroup>
+                <optgroup id="bp-list">
                     <option value="">--select blueprint--</option>
                 </optgroup>
             </select>

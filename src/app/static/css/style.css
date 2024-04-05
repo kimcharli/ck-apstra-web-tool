@@ -199,9 +199,9 @@ aside form {
 }
 
 
-.filler {
+/* .filler {
     flex-grow: 1;
-}
+} */
 
 .server-table {
     align-self: flex-end;

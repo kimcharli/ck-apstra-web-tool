@@ -3,7 +3,8 @@ import logging
 import os
 import uvicorn
 import asyncio
-from fastapi import FastAPI, Request, UploadFile
+from typing import Annotated
+from fastapi import FastAPI, Request, UploadFile, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, StreamingResponse
 from sse_starlette.sse import EventSourceResponse
@@ -40,17 +41,19 @@ async def upload_env_ini(request: Request, file: UploadFile):
     return
 
 
-@app.get("/login")
-async def login(request: Request):
+@app.post("/login")
+async def login(host: Annotated[str, Form()], port: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
     """
     login to the server
     """
     global global_store
 
+    logging.warning(f"login {host=} {port=} {username=} {password=}")
+
     await sse_logging(f"/login begin")
     await SseEvent(data=SseEventData(id='connect').loading()).send()
 
-    version = await global_store.login_server()
+    version = await global_store.login_server(host, port, username, password)
 
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_LOGIN).done()).send()
 

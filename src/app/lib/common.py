@@ -176,11 +176,13 @@ class GlobalStore:
         await sse_logging(text, self.logger)
 
 
-    async def login_server(self) -> str:
-        await self.sse_logging(f"login_server() begin")        
+    async def login_server(self, host: str, port: str, username: str, password: str) -> str:
+        await self.sse_logging(f"login_server() begin")
+        self.apstra = ApstraServer(host, port, username, password)        
         apstra_server = CkApstraSession(self.apstra.host, int(self.apstra.port), self.apstra.username, self.apstra.password)
         self.apstra.apstra_server = apstra_server
         await SseEvent(data=SseEventData(id='apstra-version', innerHTML=apstra_server.version)).send()
+        await SseEvent(data=SseEventData(id='main_bp_select', innerHTML='')).send()
         await self.sse_logging(f"login_server(): {apstra_server=}")
         return apstra_server.version
 
