@@ -20,15 +20,13 @@ pip install -e .
 uvicorn src.app.main:app --reload --log-config=log_conf.yml --port 8001
 ```
 
-## work on GUI
+## Pull down the device configuration
 
 1. Open web http://127.0.0.1:8001/
-2. Download the Sample env file.
-3. Update the env file, and save it.
-4. Load the env file
-5. Login
-6. Select the blueprint
-7. click Pull Device Conifg
+2. Fill the server access information, or load the environment file
+3. Login to the Asptra Server
+4. Select the blueprint
+5. click Pull Device Conifg
 
 # Misc
 
