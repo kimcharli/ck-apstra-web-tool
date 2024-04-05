@@ -16,6 +16,8 @@ eventSource.addEventListener('data-state', (event) => {
             target.remove();
         } else if (data.just_value !== null) {
             target.value = data.just_value;
+        } else if (data.innerHTML !== null) {
+            target.innerHTML = data.innerHTML;
         } else if (data.add_text !== null && data.add_text !== '') {
             target.innerHTML += data.add_text;
             const p = target.parentElement;

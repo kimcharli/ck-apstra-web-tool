@@ -54,6 +54,7 @@ class SseEventData:
     selected: Optional[bool] = None
     do_remove: Optional[bool] = None
     just_value: Optional[bool] = None  # to reset file upload
+    innerHTML: Optional[bool] = None
     add_text: str = '' # to add text to the value
 
     def visible(self):
@@ -101,6 +102,10 @@ class SseEventData:
 
     def remove(self):
         self.do_remove = True
+        return self
+
+    def inner_html(self, text: str):
+        self.innerHTML = text
         return self
   
 
@@ -175,7 +180,7 @@ class GlobalStore:
         await self.sse_logging(f"login_server() begin")        
         apstra_server = CkApstraSession(self.apstra.host, int(self.apstra.port), self.apstra.username, self.apstra.password)
         self.apstra.apstra_server = apstra_server
-        await SseEvent(data=SseEventData(id='apstra-version', just_value=apstra_server.version)).send()
+        await SseEvent(data=SseEventData(id='apstra-version', innerHTML=apstra_server.version)).send()
         await self.sse_logging(f"login_server(): {apstra_server=}")
         return apstra_server.version
 
