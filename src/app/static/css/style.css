@@ -198,6 +198,9 @@ aside form {
     text-align: left;
 }
 
+#apstra-version {
+    min-width: 8ch;    
+}
 
 /* .filler {
     flex-grow: 1;

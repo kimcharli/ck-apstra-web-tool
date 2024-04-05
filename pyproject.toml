@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "bp-consolidation-web"
+name = "ck-apstra-webtool"
 version = "0.1.3"
 dependencies = [
     'fastapi == 0.104.1',
@@ -18,13 +18,13 @@ requires-python = ">=3.11"
 authors = [
     {name = "Charlie Kim", email = "kimcharli@gmail.com"},
 ]
-description = "Web application for Apstra blueprint consolidation of TOR bp into main bp"
+description = "Web application for Apstra blueprint"
 readme = "README.md"
 license = {text = "MIT License"}
 keywords = ["apstra", "blueprint", "web"]
 
 [project.urls]
-Repogitory = "https://github.com/kimcharli/bp-consolidation-web"
+Repogitory = "https://github.com/kimcharli/ck-apstra-web-tool"
 
 [project.scripts]
 run-web = "app.main:main"
