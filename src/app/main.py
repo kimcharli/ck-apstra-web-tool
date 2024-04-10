@@ -51,10 +51,14 @@ async def login(host: Annotated[str, Form()], port: Annotated[str, Form()], user
     logging.warning(f"login {host=} {port=} {username=} {password=}")
 
     await sse_logging(f"/login begin")
-    await SseEvent(data=SseEventData(id='connect').loading()).send()
+    await SseEvent(data=SseEventData(id='login').loading()).send()
 
-    version = await global_store.login_server(host, port, username, password)
+    version, error = await global_store.login_server(host, port, username, password)
 
+    if error:
+        await SseEvent(data=SseEventData(id='login').error()).send()
+        await SseEvent(data=SseEventData(id=ButtonIdEnum.LAST_MESSAGE, value=error)).send()
+        return
     await SseEvent(data=SseEventData(id=ButtonIdEnum.BUTTON_LOGIN).done()).send()
 
     await global_store.bp_selections()

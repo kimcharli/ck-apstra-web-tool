@@ -8,7 +8,7 @@ from dataclasses import dataclass, asdict, field
 import asyncio
 import os
 import tarfile
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 import tempfile
 
 from ck_apstra_api.apstra_session import CkApstraSession
@@ -136,6 +136,15 @@ class ApstraServer:
     logging_level: str = 'DEBUG'
     apstra_server: Any = None  # CkApstraSession
 
+    def login(self) -> Tuple[Optional[CkApstraSession], Optional[Any]]:
+        """
+        Login to the ApstraServer and return version and the error message
+        """
+        self.apstra_server = CkApstraSession(self.host, int(self.port), self.username, self.password)
+        if self.apstra_server.last_error:
+            return self.apstra_server.version, self.apstra_server.last_error
+        return self.apstra_server.version, None
+
 @dataclass
 class BpTarget:
     tor_bp: str
@@ -176,15 +185,17 @@ class GlobalStore:
         await sse_logging(text, self.logger)
 
 
-    async def login_server(self, host: str, port: str, username: str, password: str) -> str:
+    async def login_server(self, host: str, port: str, username: str, password: str) -> Tuple[Optional[str], Optional[str]]:
         await self.sse_logging(f"login_server() begin")
-        self.apstra = ApstraServer(host, port, username, password)        
-        apstra_server = CkApstraSession(self.apstra.host, int(self.apstra.port), self.apstra.username, self.apstra.password)
-        self.apstra.apstra_server = apstra_server
-        await SseEvent(data=SseEventData(id='apstra-version', innerHTML=apstra_server.version)).send()
-        await SseEvent(data=SseEventData(id='main_bp_select', innerHTML='')).send()
-        await self.sse_logging(f"login_server(): {apstra_server=}")
-        return apstra_server.version
+        self.apstra = ApstraServer(host, port, username, password)
+        apstra_version, error = self.apstra.login()
+        await SseEvent(data=SseEventData(id='apstra-version', innerHTML=apstra_version)).send()
+        if error:
+            await self.sse_logging(f"login_server(): login error: {error=}")
+        return apstra_version, error
+        # await SseEvent(data=SseEventData(id='main_bp_select', innerHTML='')).send()
+        # await self.sse_logging(f"login_server(): {apstra_server=}")
+        # return apstra_version, error
 
     async def login_blueprint(self, bp_label: str):
         await self.sse_logging(f"login_blueprint({bp_label=})")
@@ -299,6 +310,7 @@ class GlobalStore:
 
     async def bp_selections(self):
         blueprints = self.apstra_server.get_items('blueprints')
+        await SseEvent(data=SseEventData(id='main_bp_select', element='option', value='--select blueprint--')).send()
         for bp in blueprints['items']:
             label = bp['label']
             await SseEvent(data=SseEventData(id='main_bp_select', element='option', value=label)).send()
